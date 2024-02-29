@@ -46,9 +46,8 @@ jobs:
         username: ubuntu
         key: ${{ secrets.SSH_KEY }}
         script: |
-          export NVM_DIR=~/.nvm
-          source ~/.nvm/nvm.sh
-          nvm install 20
+          export NVM_DIR="$HOME/.nvm"
+          [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
           nvm use 20
           cd /home/ubuntu/fac30a-discord-chatbot
           git stash
