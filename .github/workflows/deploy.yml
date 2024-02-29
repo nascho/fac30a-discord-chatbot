@@ -7,6 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+
     steps:
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -20,15 +21,16 @@ jobs:
         nvm install 20
         nvm use 20
 
-    - name: Debug directory
-      run: |
-        pwd
-        ls -la
+    - name: Install Git
+      run: sudo apt-get update && sudo apt-get install git -y
+
+    - name: Install PM2
+      run: npm install pm2 -g
 
     - name: Get Github action IP
       id: ip
       uses: haythem/public-ip@v1.2
-        
+
     - name: Add Github Actions IP to Security group
       run: |
         aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
@@ -36,9 +38,6 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-
-    - name: Debug IP address
-      run: echo "IP address:${{ steps.ip.outputs.ipv4 }}"
 
     - name: Deploy to prod server
       uses: appleboy/ssh-action@master
@@ -49,12 +48,14 @@ jobs:
         script: |
           export NVM_DIR=~/.nvm
           source ~/.nvm/nvm.sh
+          nvm install 20
+          nvm use 20
           cd /home/ubuntu/fac30a-discord-chatbot
           git stash
           git pull origin main
           npm install
           pm2 restart fac30a-discord-chatbot
-              
+
     - name: Remove Github Actions IP from security group
       run: |
         aws ec2 revoke-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32
