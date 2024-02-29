@@ -38,7 +38,7 @@ jobs:
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
 
     - name: Debug IP address
-      run: echo "IP address: ${{ steps.ip.outputs.ipv4 }}"
+      run: echo "IP address:${{ steps.ip.outputs.ipv4 }}"
 
     - name: Deploy to prod server
       uses: appleboy/ssh-action@master
