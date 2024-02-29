@@ -7,6 +7,18 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install NVM and use Node.js
+      run: |
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+        nvm install 20
+        nvm use 20
+
     - name: Get Github action IP
       id: ip
       uses: haythem/public-ip@v1.2
