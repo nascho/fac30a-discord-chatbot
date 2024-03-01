@@ -54,8 +54,8 @@ jobs:
           npm install
           pm2 restart fac30a-discord-chatbot
       env:
-            NVM_DIR: $HOME/.nvm
-            PATH: $HOME/.nvm/versions/node/v20.11.1/bin:$PATH
+          NVM_DIR: $HOME/.nvm
+          PATH: $HOME/.nvm/versions/node/v20.11.1/bin:$PATH
 
     - name: Remove Github Actions IP from security group
       run: |
