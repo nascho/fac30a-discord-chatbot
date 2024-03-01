@@ -2,7 +2,7 @@ name: ci-cd pipeline deploy to prod
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   deploy:
@@ -24,7 +24,7 @@ jobs:
     - name: Get Github action IP
       id: ip
       uses: haythem/public-ip@v1.2
-        
+
     - name: Add Github Actions IP to Security group
       run: |
         aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
@@ -39,6 +39,11 @@ jobs:
         host: ${{ secrets.HOST_IP }}
         username: ubuntu
         key: ${{ secrets.SSH_KEY }}
+        port: 22
+        timeout: 30s
+        command_timeout: 10m
+        proxy_port: 22
+        proxy_timeout: 30s
         script: |
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
@@ -60,4 +65,3 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       if: always()
-
