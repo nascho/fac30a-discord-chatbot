@@ -47,13 +47,14 @@ jobs:
         script: |
           export NVM_DIR="$HOME/.nvm"
           [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+          nvm install 20
           nvm use 20
           cd /home/ubuntu/fac30a-discord-chatbot
           git stash
           git pull origin main
           npm install
           pm2 restart fac30a-discord-chatbot
-      env:
+        env: |
           NVM_DIR: $HOME/.nvm
           PATH: $HOME/.nvm/versions/node/v20.11.1/bin:$PATH
 
