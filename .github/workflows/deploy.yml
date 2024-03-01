@@ -2,7 +2,7 @@ name: ci-cd pipeline deploy to prod
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   deploy:
@@ -21,16 +21,10 @@ jobs:
         nvm install 20
         nvm use 20
 
-    - name: Install Git
-      run: sudo apt-get update && sudo apt-get install git -y
-
-    - name: Install PM2
-      run: npm install pm2 -g
-
     - name: Get Github action IP
       id: ip
       uses: haythem/public-ip@v1.2
-
+        
     - name: Add Github Actions IP to Security group
       run: |
         aws ec2 authorize-security-group-ingress --group-name ${{ secrets.AWS_SG_NAME }} --protocol tcp --port 22 --cidr ${{ steps.ip.outputs.ipv4 }}/32    
@@ -38,7 +32,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-
+        
     - name: Deploy to prod server
       uses: appleboy/ssh-action@master
       with:
@@ -54,6 +48,9 @@ jobs:
           git pull origin main
           npm install
           pm2 restart fac30a-discord-chatbot
+      env:
+        NVM_DIR: $HOME/.nvm
+        PATH: $HOME/.nvm/versions/node/v20.11.1/bin:$PATH
 
     - name: Remove Github Actions IP from security group
       run: |
@@ -63,3 +60,4 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_DEFAULT_REGION: ${{ secrets.AWS_DEFAULT_REGION }}
       if: always()
+
